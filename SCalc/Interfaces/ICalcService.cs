@@ -4,6 +4,6 @@ namespace SCalc.Interfaces;
 
 public interface ICalcService
 {
-   public void Calc(string userExpression);
-   public int getCalcResult();
+   public void Calc(string userPrompt);
+   public double GetCalcResult();
 }

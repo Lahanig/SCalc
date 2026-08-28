@@ -14,10 +14,10 @@ public class App
     _calcService = calcService;
   }
 
-  private void ShowCalcResult(string userExpression)
+  private void ShowCalcResult(string userPrompt)
   {
-    _calcService.Calc(userExpression);
-    Console.WriteLine($"Result: {_calcService.getCalcResult()}");
+    _calcService.Calc(userPrompt);
+    Console.WriteLine($"Result: {_calcService.GetCalcResult()}");
   }
 
   public void Run()
@@ -39,7 +39,10 @@ public class App
         isRunning = false;
         Console.WriteLine("Exit...");
       } else {
-        ShowCalcResult(input?.ToLower());
+        if (input != null && input != "")
+        {
+          ShowCalcResult(input.ToLower());
+        } 
       }
     } 
   }
