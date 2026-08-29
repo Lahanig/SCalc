@@ -5,11 +5,11 @@ using SCalc.Services;
 
 internal class Program
 {
-  static void Main() {
-    ICalcService calcService = new CalcService();
-    App app = new App(calcService);
-    
-    app.Run();
-  }
-}
+    static void Main()
+    {
+        ICalcService calcService = new CalcService();
+        App app = new App(calcService);
 
+        app.Run();
+    }
+}
