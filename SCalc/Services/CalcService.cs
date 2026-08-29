@@ -6,16 +6,17 @@ namespace SCalc.Services;
 
 public static class StringExtensions
 {
-    public static double ToDouble(this string value)
-    { 
-        string cleanValue = value.Replace(',', '.');
-        
-        if (double.TryParse(cleanValue, CultureInfo.InvariantCulture, out double result))
-        {
-            return result;
-        }
-        return 0;
+  public static double ToDouble(this string value)
+  { 
+    string cleanValue = value.Replace(',', '.');
+
+    if (double.TryParse(cleanValue, CultureInfo.InvariantCulture, out double result))
+    {
+      return result;
     }
+    
+    return 0;
+  }
 }
 
 public class CalcService : ICalcService
