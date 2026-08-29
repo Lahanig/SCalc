@@ -14,7 +14,7 @@ public static class StringExtensions
     {
       return result;
     }
-    
+
     return 0;
   }
 }
