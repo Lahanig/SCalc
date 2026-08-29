@@ -23,7 +23,6 @@ public class CalcService : ICalcService
 {
     private double calcResult = 0;
 
-    // private List<string> trimedUserPrompt = new List<string>();
     private List<Token> _numberTokenList = new List<Token>();
     private List<Token> _operationTokenList = new List<Token>();
 
