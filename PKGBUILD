@@ -1,4 +1,4 @@
-pkgname=Scalc
+pkgname=SCalc
 pkgver=0.1.2
 pkgrel=1
 pkgdesc="Simple CLI calculator"
