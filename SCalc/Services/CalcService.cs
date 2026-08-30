@@ -63,7 +63,7 @@ public class CalcService : ICalcService
         if (tempNewTokenRawValue == "(")
         {
             _tokenList.Add(
-                new Token { rawValue = tempNewTokenRawValue, type = TokenType.Parenthesis }
+                new Token { RawValue = tempNewTokenRawValue, Type = TokenType.Parenthesis }
             );
             tempNewTokenRawValue = "";
         }
@@ -98,9 +98,9 @@ public class CalcService : ICalcService
                     _tokenList.Add(
                         new Token
                         {
-                            rawValue = tempNewTokenRawValue,
-                            numberValue = Convert.ToDouble(tempNewTokenRawValue),
-                            type = TokenType.Number,
+                            RawValue = tempNewTokenRawValue,
+                            NumberValue = Convert.ToDouble(tempNewTokenRawValue),
+                            Type = TokenType.Number,
                         }
                     );
                     tempNewTokenRawValue = "";
@@ -109,13 +109,13 @@ public class CalcService : ICalcService
                 if (currentSymbol == "(" || currentSymbol == ")")
                 {
                     _tokenList.Add(
-                        new Token { rawValue = currentSymbol, type = TokenType.Parenthesis }
+                        new Token { RawValue = currentSymbol, Type = TokenType.Parenthesis }
                     );
                 }
                 else
                 {
                     _tokenList.Add(
-                        new Token { rawValue = currentSymbol, type = TokenType.Operator }
+                        new Token { RawValue = currentSymbol, Type = TokenType.Operator }
                     );
                 }
             }
@@ -131,9 +131,9 @@ public class CalcService : ICalcService
                     _tokenList.Add(
                         new Token
                         {
-                            rawValue = tempNewTokenRawValue.ToString(),
-                            numberValue = tempNewTokenRawValue.ToDouble(),
-                            type = TokenType.Number,
+                            RawValue = tempNewTokenRawValue.ToString(),
+                            NumberValue = tempNewTokenRawValue.ToDouble(),
+                            Type = TokenType.Number,
                         }
                     );
                 }
@@ -203,15 +203,15 @@ public class CalcService : ICalcService
 
         foreach (Token token in tokens)
         {
-            if (token.type == TokenType.Number)
+            if (token.Type == TokenType.Number)
             {
-                numbers.Push(token.numberValue);
+                numbers.Push(token.NumberValue);
             }
-            else if (token.rawValue == "(")
+            else if (token.RawValue == "(")
             {
-                operators.Push(token.rawValue);
+                operators.Push(token.RawValue);
             }
-            else if (token.rawValue == ")")
+            else if (token.RawValue == ")")
             {
                 while (operators.Count > 0 && operators.Peek() != "(")
                 {
@@ -226,13 +226,13 @@ public class CalcService : ICalcService
             {
                 while (
                     operators.Count > 0
-                    && GetPriority(operators.Peek()) >= GetPriority(token.rawValue)
+                    && GetPriority(operators.Peek()) >= GetPriority(token.RawValue)
                 )
                 {
-                    Console.WriteLine(operators.Peek(), token.rawValue);
+                    Console.WriteLine(operators.Peek(), token.RawValue);
                     ExecuteTopOperator(numbers, operators);
                 }
-                operators.Push(token.rawValue);
+                operators.Push(token.RawValue);
             }
         }
 
