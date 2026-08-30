@@ -23,8 +23,7 @@ public class CalcService : ICalcService
 {
     private double calcResult = 0;
 
-    private List<Token> _numberTokenList = new List<Token>();
-    private List<Token> _operationTokenList = new List<Token>();
+    private List<Token> _tokenList = new List<Token>();
 
     private bool isOperation(string operation)
     {
@@ -40,51 +39,104 @@ public class CalcService : ICalcService
         return result;
     }
 
-    private void CreateTokenLists(string userPrompt)
+    private int GetPriority(string op)
     {
-        _numberTokenList = new List<Token>();
-        _operationTokenList = new List<Token>();
+        int result = op switch
+        {
+            "+" => 1,
+            "-" => 1,
+            "*" => 2,
+            "/" => 2,
+            _ => 0,
+        };
+
+        return result;
+    }
+
+    private void CreateCombinedTokenList(string userPrompt)
+    {
+        _tokenList = new List<Token>();
 
         string trimedUserPrompt = userPrompt.Replace(" ", "");
         string tempNewTokenRawValue = trimedUserPrompt[0].ToString();
 
+        if (tempNewTokenRawValue == "(")
+        {
+            _tokenList.Add(
+                new Token { rawValue = tempNewTokenRawValue, type = TokenType.Parenthesis }
+            );
+            tempNewTokenRawValue = "";
+        }
+
         for (int i = 1; i < trimedUserPrompt.Length; i++)
         {
+            string currentSymbol = trimedUserPrompt[i].ToString();
+
+            bool isUnaryMinus =
+                currentSymbol == "-"
+                && (
+                    i == 0
+                    || isOperation(trimedUserPrompt[i - 1].ToString())
+                    || trimedUserPrompt[i - 1] == '('
+                );
+
+            if (isUnaryMinus)
+            {
+                tempNewTokenRawValue += currentSymbol;
+                continue;
+            }
+
             if (
-                isOperation(trimedUserPrompt[i].ToString())
-                && !isOperation(trimedUserPrompt[i - 1].ToString())
+                isOperation(currentSymbol)
+                // && !isOperation(trimedUserPrompt[i - 1].ToString())
+                || currentSymbol == "("
+                || currentSymbol == ")"
             )
             {
-                _numberTokenList.Add(
-                    new Token
-                    {
-                        rawValue = tempNewTokenRawValue.ToString(),
-                        numberValue = tempNewTokenRawValue.ToDouble(),
-                        type = "NUMBER",
-                    }
-                );
+                if (!string.IsNullOrEmpty(tempNewTokenRawValue) && tempNewTokenRawValue != "-")
+                {
+                    _tokenList.Add(
+                        new Token
+                        {
+                            rawValue = tempNewTokenRawValue,
+                            numberValue = Convert.ToDouble(tempNewTokenRawValue),
+                            type = TokenType.Number,
+                        }
+                    );
+                    tempNewTokenRawValue = "";
+                }
 
-                tempNewTokenRawValue = "";
-
-                _operationTokenList.Add(
-                    new Token { rawValue = trimedUserPrompt[i].ToString(), type = "OPERATION" }
-                );
+                if (currentSymbol == "(" || currentSymbol == ")")
+                {
+                    _tokenList.Add(
+                        new Token { rawValue = currentSymbol, type = TokenType.Parenthesis }
+                    );
+                }
+                else
+                {
+                    _tokenList.Add(
+                        new Token { rawValue = currentSymbol, type = TokenType.Operator }
+                    );
+                }
             }
             else
             {
-                tempNewTokenRawValue += trimedUserPrompt[i];
+                tempNewTokenRawValue += currentSymbol;
             }
 
             if (i == trimedUserPrompt.Length - 1)
             {
-                _numberTokenList.Add(
-                    new Token
-                    {
-                        rawValue = tempNewTokenRawValue.ToString(),
-                        numberValue = tempNewTokenRawValue.ToDouble(),
-                        type = "NUMBER",
-                    }
-                );
+                if (tempNewTokenRawValue != "")
+                {
+                    _tokenList.Add(
+                        new Token
+                        {
+                            rawValue = tempNewTokenRawValue.ToString(),
+                            numberValue = tempNewTokenRawValue.ToDouble(),
+                            type = TokenType.Number,
+                        }
+                    );
+                }
             }
         }
 
@@ -100,30 +152,96 @@ public class CalcService : ICalcService
         // }
     }
 
+    private void ExecuteTopOperator(Stack<double> numbers, Stack<string> operators)
+    {
+        if (operators.Count == 0)
+            return;
+
+        string op = operators.Pop();
+
+        if (numbers.Count < 2)
+            return;
+
+        double r = numbers.Pop();
+        double l = numbers.Pop();
+
+        switch (op)
+        {
+            case "+":
+                numbers.Push(l + r);
+                break;
+            case "-":
+                numbers.Push(l - r);
+                break;
+            case "*":
+                numbers.Push(l * r);
+                break;
+            case "/":
+
+                if (r == 0)
+                    numbers.Push(0);
+                else
+                    numbers.Push(l / r);
+                break;
+        }
+    }
+
     public void Calc(string userPrompt)
     {
-        CreateTokenLists(userPrompt);
+        CreateCombinedTokenList(userPrompt);
 
-        calcResult = _numberTokenList[0].numberValue;
+        List<Token> tokens = _tokenList;
 
-        for (int i = 0; i < _operationTokenList.Count; i++)
+        Stack<double> numbers = new Stack<double>();
+        Stack<string> operators = new Stack<string>();
+
+        // Debug
+        // foreach (Token token in tokens)
+        // {
+        //     Console.WriteLine($"token: {token.rawValue}");
+        // }
+
+        foreach (Token token in tokens)
         {
-            switch (_operationTokenList[i].rawValue)
+            if (token.type == TokenType.Number)
             {
-                case "+":
-                    calcResult += _numberTokenList[i + 1].numberValue;
-                    break;
-                case "-":
-                    calcResult -= _numberTokenList[i + 1].numberValue;
-                    break;
-                case "*":
-                    calcResult *= _numberTokenList[i + 1].numberValue;
-                    break;
-                case "/":
-                    calcResult /= _numberTokenList[i + 1].numberValue;
-                    break;
+                numbers.Push(token.numberValue);
+            }
+            else if (token.rawValue == "(")
+            {
+                operators.Push(token.rawValue);
+            }
+            else if (token.rawValue == ")")
+            {
+                while (operators.Count > 0 && operators.Peek() != "(")
+                {
+                    ExecuteTopOperator(numbers, operators);
+                }
+                if (operators.Count > 0)
+                {
+                    operators.Pop();
+                }
+            }
+            else
+            {
+                while (
+                    operators.Count > 0
+                    && GetPriority(operators.Peek()) >= GetPriority(token.rawValue)
+                )
+                {
+                    Console.WriteLine(operators.Peek(), token.rawValue);
+                    ExecuteTopOperator(numbers, operators);
+                }
+                operators.Push(token.rawValue);
             }
         }
+
+        while (operators.Count > 0)
+        {
+            ExecuteTopOperator(numbers, operators);
+        }
+
+        calcResult = numbers.Count > 0 ? numbers.Pop() : 0;
     }
 
     public double GetCalcResult()
