@@ -17,7 +17,7 @@ public class App
     private void ShowCalcResult(string userPrompt)
     {
         _calcService.Calc(userPrompt);
-        Console.WriteLine($"Result: {_calcService.GetCalcResult()}");
+        Console.WriteLine($"Result: {_calcService.GetCalcResult()}\n");
     }
 
     public void Run()
@@ -25,11 +25,12 @@ public class App
         Console.Clear();
 
         Console.WriteLine($"{StartupText}");
+        Console.WriteLine($"\n{TipText}\n");
 
         bool isRunning = true;
         while (isRunning)
         {
-            Console.WriteLine($"\n{TipText}\n");
+            // Console.WriteLine($"\n{TipText}\n");
             Console.Write($"{InputSymbol} ");
 
             string? input = Console.ReadLine();
