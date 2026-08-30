@@ -139,17 +139,6 @@ public class CalcService : ICalcService
                 }
             }
         }
-
-        // Debug
-        // foreach (Token token in _numberTokenList)
-        // {
-        //   Console.WriteLine($"n: {token.numberValue}");
-        // }
-        //
-        // foreach (Token token in _operationTokenList)
-        // {
-        //   Console.WriteLine($"o: {token.rawValue}");
-        // }
     }
 
     private void ExecuteTopOperator(Stack<double> numbers, Stack<string> operators)
@@ -229,7 +218,6 @@ public class CalcService : ICalcService
                     && GetPriority(operators.Peek()) >= GetPriority(token.RawValue)
                 )
                 {
-                    Console.WriteLine(operators.Peek(), token.RawValue);
                     ExecuteTopOperator(numbers, operators);
                 }
                 operators.Push(token.RawValue);
