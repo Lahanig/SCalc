@@ -8,4 +8,4 @@ dotnet publish src/SCalc/SCalc.csproj \
 	-r linux-x64 \
 	-p:PublishAot=true \
 	-p:CppCompilerAndLinker=gcc \
-	-o ./artifacts/linux-x64/native
+	--artifacts-path "./artifacts/linux-x64/native"
