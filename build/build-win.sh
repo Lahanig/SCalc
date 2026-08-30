@@ -9,4 +9,4 @@ dotnet publish src/SCalc/SCalc.csproj \
 	--self-contained true \
 	-p:PublishSingleFile=true \
 	-p:PublishReadyToRun=true \
-	-o ./artifacts/win-x64
+	--artifacts-path "./artifacts/win-x64/default"
