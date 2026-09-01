@@ -7,6 +7,7 @@ url="https://github.com/Lahanig/SCalc"
 license=('MIT')
 depends=('glibc')
 makedepends=('dotnet-sdk>=10.0.11')
+options=(!strip !debug)
 
 source=()
 sha256sums=()
