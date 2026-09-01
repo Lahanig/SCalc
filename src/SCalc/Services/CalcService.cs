@@ -21,7 +21,7 @@ public static class StringExtensions
 
 public class CalcService : ICalcService
 {
-    private double calcResult = 0;
+    private double calcResult;
 
     private List<Token> _tokenList = new List<Token>();
 
@@ -232,7 +232,7 @@ public class CalcService : ICalcService
         calcResult = numbers.Count > 0 ? numbers.Pop() : 0;
     }
 
-    public double GetCalcResult()
+    public double? GetCalcResult()
     {
         return calcResult;
     }
