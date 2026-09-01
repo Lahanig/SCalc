@@ -16,8 +16,14 @@ public class App
 
     private void ShowCalcResult(string userPrompt)
     {
+        if (!char.IsDigit(userPrompt[0]))
+            return;
+
         _calcService.Calc(userPrompt);
-        Console.WriteLine($"Result: {_calcService.GetCalcResult()}\n");
+
+        double calcResult = _calcService.GetCalcResult();
+
+        Console.WriteLine($"Result: {calcResult}");
     }
 
     public void Run()
@@ -45,7 +51,11 @@ public class App
                 if (input != null && input != "")
                 {
                     ShowCalcResult(input.ToLower());
+                    ShowCalcResult(input.ToLower().Trim());
+                    Console.WriteLine();
                 }
+                else
+                    Console.WriteLine();
             }
         }
     }
