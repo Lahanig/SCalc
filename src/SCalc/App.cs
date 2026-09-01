@@ -48,9 +48,8 @@ public class App
             }
             else
             {
-                if (input != null && input != "")
+                if (input != null && input.Length > 0 && input.Trim() != "")
                 {
-                    ShowCalcResult(input.ToLower());
                     ShowCalcResult(input.ToLower().Trim());
                     Console.WriteLine();
                 }
