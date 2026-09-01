@@ -16,7 +16,7 @@ public class App
 
     private void ShowCalcResult(string userPrompt)
     {
-        if (!char.IsDigit(userPrompt[0]))
+        if (!char.IsDigit(userPrompt[0]) && userPrompt[0] != '(')
             return;
 
         _calcService.Calc(userPrompt);
